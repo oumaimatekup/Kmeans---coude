@@ -1,0 +1,253 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Mar 31 09:28:03 2022
+
+@author: gasmi
+"""
+import matplotlib.pyplot as plt
+
+import numpy as np 
+from sklearn.datasets import make_blobs
+Data, y = make_blobs(n_samples = 600 , n_features = 2 , centers = 4)
+Data0 = Data[:,0]
+Data1 = Data[:,1]
+print(Data0) 
+print(Data1)
+
+
+plt.xlabel('Data0')
+plt.ylabel('Data1')
+plt.scatter(Data0,Data1)
+
+
+
+#plt.show()
+from sklearn.cluster import KMeans
+from scipy.spatial.distance import cdist
+X = np.array(list(zip(Data0, Data1))).reshape(len(Data1), 2)
+def  coude():
+    W_lists=[]
+    for i in range(2,11):       
+        k_Model = KMeans(n_clusters=i).fit(Data)
+        k_Model.fit(Data)
+        #W_lists = W_lists.append( k_Model.fit(Data)))
+        W_lists.append(sum(np.min(cdist(X, k_Model.cluster_centers_,  'euclidean'),axis=1)) / X.shape[0])
+    return W_lists 
+                       
+#Distorsion: elle est calculée comme
+# la moyenne des distances au carré des centres de cluster des clusters respectifs. 
+#En règle générale, la métrique de distance euclidienne est utilisée.
+#Inertie: C’est la somme des distances au carré des échantillons par rapport
+# à leur centre de cluster le plus proche.
+       #W_lists.append(k_Model.inertia_)
+       
+k=[]
+for i in range(2,11):
+    K=k.append(i)
+rr = coude()
+plt.plot(k , rr , 'bx-') 
+plt.xlabel('Values of K') 
+plt.ylabel('error') 
+plt.title('The Elbow Method using squard of error ') 
+plt.show()
+######################################
+#####################################
+def  coudoum(n):
+    W_lists=[]
+    for i in range(2,n):       
+        k_Model = KMeans(n_clusters=i).fit(Data)
+        k_Model.fit(Data)
+        W_lists.append(k_Model.inertia_) 
+    return W_lists
+k=[]
+for i in range(2,11):
+    K=k.append(i)
+rr = coude()
+plt.plot(k , rr , 'bx-') 
+plt.xlabel('Values of K') 
+plt.ylabel('error') 
+plt.title('The Elbow Method using squard of error ') 
+plt.show()
+#our déterminer le nombre optimal de clusters,
+#il faut sélectionner la valeur de k au «coude», 
+#’est-à-dire le point après lequel la distorsion / inertie
+#commence à diminuer de façon linéaire. Ainsi, pour les données données,
+#nous concluons que le nombre optimal de grappes pour les données est de 4.
+
+X = np.array(list(zip(Data0, Data1))).reshape(len(Data1), 2)
+Kmeans = KMeans(n_clusters= 4 ).fit(X)
+Label = Kmeans.labels_
+Centre = Kmeans.cluster_centers_
+plt.xlabel('ticks')
+plt.ylabel('Data')
+plt.scatter(X[: , 0] , X[: , 1] , c = Label , cmap="plasma")
+plt.scatter(Kmeans.cluster_centers_ [: , 0] , Kmeans.cluster_centers_[: , 1] , c = 'g', cmap="plasma")
+plt.xlabel("feature0")
+plt.xlabel("feature1")
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from sklearn.cluster import KMeans
+for i in range(2,11):
+    X = np.array(list(zip(Data0, Data1))).reshape(len(Data1), 2)
+    Kmeans = KMeans(n_clusters= i ).fit(X)
+    Label = Kmeans.labels_
+    #Centre = Kmeans.cluster_centers_
+    plt.xlabel('ticks')
+    plt.ylabel('Data')
+    plt.scatter(X[: , 0] , X[: , 1] , c = Label , cmap="plasma")
+    #plt.scatter(Kmeans.cluster_centers_ [: , 0] , Kmeans.cluster_centers_[: , 1] , c = 'g', cmap="plasma")
+    plt.xlabel("feature0")
+    plt.xlabel("feature1")
+    plt.show()
+##################################
+####################################
+
+k=range(2,11)
+from sklearn.metrics import silhouette_score
+from sklearn.cluster import KMeans
+for i in k : 
+    km = KMeans(n_clusters=i)
+    km=km.fit(Data)
+    silhouette_avg = silhouette_score(Data,km.labels_)
+    print("for n_clusters=", i , "the averge silhouette_score_score is :", silhouette_avg)
+    plt.scatter(X[:,0],X[:,1] , c = km.labels_,cmap= 'plasma')
+    plt.show()
+from yellowbrick.cluster import SilhouetteVisualizer
+from sklearn.cluster import KMeans
+#reate KMeans instance for different number of clusters
+#range_n_clusters = [2, 3, 4]   
+for n_clusters in range(2,11):
+       plt.subplot(1,2,1)
+       model = KMeans(n_clusters)
+       model.fit(Data)
+       visualizer = SilhouetteVisualizer(model , colors ='yellowbrick')
+       visualizer.fit(Data)
+       plt.subplot(1,2,2)
+       plt.scatter(Data[: , 0] , Data[: , 1] , c = model.labels_ , cmap="plasma")
+       visualizer.show()
+       
+from sklearn.cluster import KMeans
+import scipy.cluster.hierarchy as shc
+from sklearn.metrics import silhouette_samples, silhouette_score
+import matplotlib.cm as cm
+import numpy as np
+dn =shc.dendrogram( shc.linkage(Data , 'ward'))
+plt.title("Dentograms")
+plt.figure(figsize=(10, 7))
+plt.axhline( y=100 , color= 'r' ,  linestyle='--')
+
+from sklearn.cluster import AgglomerativeClustering 
+cluster = AgglomerativeClustering(n_clusters=4, affinity='euclidean', linkage='ward')  
+YPred=cluster.fit_predict(Data)
+print(YPred)
+plt.figure(figsize=(10, 7))  
+plt.scatter(Data[:,0], Data[:,1], c=YPred, cmap='plasma')
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+  
+from sklearn.cluster import DBSCAN
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import normalize
+from sklearn.decomposition import PCA
+from sklearn.metrics import silhouette_score
+from sklearn.metrics import v_measure_score
+from sklearn.metrics import completeness_score
+from sklearn.metrics import homogeneity_score
+
+X = np.array(list(zip(Data0, Data1))).reshape(len(Data1), 2)
+print(X)
+print(Data)
+# Scaling the data to bring all the attributes to a comparable level
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+# Normalizing the data so that 
+# the data approximately follows a Gaussian distribution
+X_normalized = normalize(X_scaled)
+# Converting the numpy array into a pandas DataFrame
+X_normalized = pd.DataFrame(X_normalized)
+##################### PCA METHODS 
+###################################
+pca = PCA(n_components = 2)
+X_principal = pca.fit_transform(X_normalized)
+X_principal = pd.DataFrame(X_principal)
+X_principal.columns = ['P1', 'P2']
+print(X_principal.head())
+
+###########################
+###########################
+#Step 5: Building the clustering model
+# Numpy array of all the cluster labels assigned to each data point
+
+db = DBSCAN(eps=3, min_samples=10).fit(X)
+core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+core_samples_mask[db.core_sample_indices_] = True
+labelsnn = db.labels_
+# Number of clusters in labels, ignoring noise if present.
+n_clusters_ = len(set(labelsnn)) 
+n_noise_ = list(labelsnn).count(-1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from sklearn.metrics import adjusted_rand_score
+from sklearn.metrics import adjusted_mutual_info_score
+print("Estimated number of clusters: %d" % n_clusters_)
+print("Estimated number of noise points: %d" % n_noise_)
+print("Homogeneity: " ,homogeneity_score(y, labelsnn))
+print("Completeness: ", completeness_score(y, labelsnn))
+print("V-measure: ",v_measure_score(y, labelsnn))
+print("Adjusted Rand Index:", adjusted_rand_score(y, labelsnn))
+print("Adjusted Mutual Information:", adjusted_mutual_info_score(y, labelsnn))
+print("Silhouette Coefficient: ", silhouette_score(X, labelsnn))
+
+plt.scatter(X[:, 0], X[:, 1], c= labelsnn, label=y ,cmap= "plasma")
+plt.xlabel("$x_1$")
+plt.ylabel("$x_2$")
